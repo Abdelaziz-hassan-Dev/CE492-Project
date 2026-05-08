@@ -44,6 +44,7 @@ void setup() {
 
     Serial.println("Checking for updates...");
     checkForUpdates(); // افحص التحديث عند بدء التشغيل
+    Serial.println("update done.....");
 
     initTelegram();
     initCloud();     
