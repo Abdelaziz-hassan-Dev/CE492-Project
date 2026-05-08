@@ -23,7 +23,7 @@ void checkSystemConditions(float temp, float hum, bool flame) {
     // 1. Fire Logic (High Priority)
     if (flame) {
         if (currentMillis - lastFlameAlert > FLAME_COOLDOWN) {
-            String msg = "⚠️ Fire Detected! ⚠️\n";
+            String msg = "⚠️ ⚠️\n";
             sendTelegramMessage(msg);
             lastFlameAlert = currentMillis;
         }
@@ -32,7 +32,7 @@ void checkSystemConditions(float temp, float hum, bool flame) {
     // 2. Temperature Logic
     if (!isnan(temp) && temp > TEMP_HIGH_LIMIT) {
         if (currentMillis - lastTempAlert > ALARM_COOLDOWN) {
-            String msg = "⚠️ High Temperature Alert!⚠️\n";
+            String msg = "⚠️ ⚠️\n";
             msg += "Current Temp: " + String(temp, 1) + "°C\n";
             msg += "Threshold: " + String(TEMP_HIGH_LIMIT, 1) + "°C";
             sendTelegramMessage(msg);
