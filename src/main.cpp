@@ -6,6 +6,7 @@
 #include "telegram_manager.h"
 #include "cloud_manager.h"    
 #include "firebase_manager.h" 
+#include "ota_manager.h" 
 
 unsigned long lastSystemTick = 0;
 const long SYSTEM_TICK_INTERVAL = 2000;
@@ -40,6 +41,9 @@ void setup() {
         delay(500);
     }
     Serial.println("\nTime Synced!");
+
+    Serial.println("Checking for updates...");
+    checkForUpdates(); // افحص التحديث عند بدء التشغيل
 
     initTelegram();
     initCloud();     
