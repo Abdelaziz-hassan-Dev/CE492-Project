@@ -1,10 +1,12 @@
 #include "ota_manager.h"
+#include "telegram_manager.h"
+
 
 void checkForUpdates() {
     if (WiFi.status() != WL_CONNECTED) return;
 
     WiFiClientSecure client;
-    client.setInsecure(); // لتجاوز فحص شهادة SSL من GitHub للتبسيط
+    client.setInsecure(); 
 
     HTTPClient http;
     http.begin(client, VERSION_JSON_URL);
@@ -12,27 +14,62 @@ void checkForUpdates() {
     int httpCode = http.GET();
     if (httpCode == HTTP_CODE_OK) {
         String payload = http.getString();
-        //StaticJsonDocument<256> doc;
-        JsonDocument doc; // 
+        JsonDocument doc; 
         deserializeJson(doc, payload);
 
         String newVersion = doc["version"];
         String binUrl = doc["url"];
 
-        Serial.print("Current Version: "); Serial.println(CURRENT_VERSION);
-        Serial.print("New Version available: "); Serial.println(newVersion);
-
         if (newVersion != CURRENT_VERSION) {
-            Serial.println("Update found! Starting OTA...");
+            // 1. أرسل الرسالة أولاً لتكون على علم بالبدء
+            sendTelegramMessage("🔄 تحديث جديد متاح: " + newVersion + "\nبدء التحميل الآن...");
+            
+            // 2. ابدأ التحديث
             performUpdate(binUrl);
         } else {
             Serial.println("System is up to date.");
         }
     } else {
-        Serial.printf("Failed to check version, error: %s\n", http.errorToString(httpCode).c_str());
+        // نصيحة: أرسل رسالة في حال فشل الاتصال بالسيرفر لتتمكن من المتابعة بدون سيريال
+        sendTelegramMessage("❌ فشل التحقق من التحديث. كود الخطأ: " + String(httpCode));
     }
     http.end();
 }
+
+
+// void checkForUpdates() {
+//     if (WiFi.status() != WL_CONNECTED) return;
+
+//     WiFiClientSecure client;
+//     client.setInsecure(); // لتجاوز فحص شهادة SSL من GitHub للتبسيط
+
+//     HTTPClient http;
+//     http.begin(client, VERSION_JSON_URL);
+    
+//     int httpCode = http.GET();
+//     if (httpCode == HTTP_CODE_OK) {
+//         String payload = http.getString();
+//         //StaticJsonDocument<256> doc;
+//         JsonDocument doc; // 
+//         deserializeJson(doc, payload);
+
+//         String newVersion = doc["version"];
+//         String binUrl = doc["url"];
+
+//         Serial.print("Current Version: "); Serial.println(CURRENT_VERSION);
+//         Serial.print("New Version available: "); Serial.println(newVersion);
+
+//         if (newVersion != CURRENT_VERSION) {
+//             Serial.println("Update found! Starting OTA...");
+//             performUpdate(binUrl);
+//         } else {
+//             Serial.println("System is up to date.");
+//         }
+//     } else {
+//         Serial.printf("Failed to check version, error: %s\n", http.errorToString(httpCode).c_str());
+//     }
+//     http.end();
+// }
 
 void performUpdate(String binUrl) {
     WiFiClientSecure client;
