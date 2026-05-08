@@ -47,7 +47,8 @@ void setup() {
     initCloud();     
     initFirebase();  
 
-        Serial.println("Checking for updates...");
+    
+    Serial.println("Checking for updates...");
     checkForUpdates(); // افحص التحديث عند بدء التشغيل
     Serial.println("update done.....");
 }
