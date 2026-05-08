@@ -29,7 +29,6 @@ void setup() {
         Serial.print(".");
     }
     Serial.println("\nConnected!");
-     sendTelegramMessage("✅ System Started and Connected to WiFi!");
 
     // Valid system time is critical for historical data logging
     configTime(gmtOffset_sec, daylightOffset_sec, "pool.ntp.org", "time.nist.gov");
@@ -48,11 +47,11 @@ void setup() {
     initCloud();     
     initFirebase();  
 
-    
+    sendTelegramMessage(" System Started and Connected to WiFi!");
     Serial.println("Checking for updates...");
     checkForUpdates(); // افحص التحديث عند بدء التشغيل
     Serial.println("update done.....");
-    sendTelegramMessage("✅ System is up to date!");
+    sendTelegramMessage("✅ Update Check Completed!");
 }
 
 void loop() {
