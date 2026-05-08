@@ -42,13 +42,14 @@ void setup() {
     }
     Serial.println("\nTime Synced!");
 
-    Serial.println("Checking for updates...");
-    checkForUpdates(); // افحص التحديث عند بدء التشغيل
-    Serial.println("update done.....");
 
     initTelegram();
     initCloud();     
     initFirebase();  
+
+        Serial.println("Checking for updates...");
+    checkForUpdates(); // افحص التحديث عند بدء التشغيل
+    Serial.println("update done.....");
 }
 
 void loop() {
