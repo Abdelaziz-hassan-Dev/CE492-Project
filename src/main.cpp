@@ -30,37 +30,26 @@ void setup() {
         delay(1000);
         Serial.print(".");
     }
-    Serial.println("\nConnected!");
 
     // Valid system time is critical for historical data logging
     configTime(gmtOffset_sec, daylightOffset_sec, "pool.ntp.org", "time.nist.gov");
-    Serial.print("Waiting for NTP time sync: ");
     struct tm timeinfo;
     
     // Blocking wait until time is synced to avoid invalid timestamps in logs
     while(!getLocalTime(&timeinfo)){
-        Serial.print(".");
         delay(500);
     }
-    Serial.println("\nTime Synced!");
 
     initQueues();
     initTelegram();
     initCloud();     
     initFirebase();  
 
-    checkForUpdates(); // افحص التحديث عند بدء التشغيل
+    xTaskCreatePinnedToCore(telegramTask, "TelegramTask", 8192, NULL, 1, NULL, 0);
+    xTaskCreatePinnedToCore(loggingTask,  "LoggingTask",  8192, NULL, 1, NULL, 0);
 
-  xTaskCreatePinnedToCore(
-        telegramTask,    // الدالة
-        "TelegramTask",  // اسم للـ debug
-        8192,            // حجم الـ stack (كافي للـ HTTPS)
-        NULL,            // parameters
-        1,               // priority
-        NULL,            // task handle (مش محتاجينه)
-        0                // Core 0
-    );
-  xTaskCreatePinnedToCore(loggingTask, "LoggingTask", 8192, NULL, 1, NULL, 0); 
+    checkForUpdates(); 
+
 }
 
 void loop() {
@@ -78,13 +67,12 @@ void loop() {
         checkSystemConditions(temp, hum, isFire);
 
        if (currentMillis - lastDataLog >= LOG_INTERVAL) {
-    // فقط لو البيانات صالحة
-    if (!isnan(temp) && !isnan(hum)) {
+       if (!isnan(temp) && !isnan(hum)) {
         SensorLog_t logData = { temp, hum, isFire };
         if (xQueueSend(loggingQueue, &logData, pdMS_TO_TICKS(0)) != pdTRUE) {
         }
     }
-    lastDataLog = currentMillis; // دايماً حدّث الوقت حتى لو ما أرسلت
+    lastDataLog = currentMillis;
         }
     }
 }
