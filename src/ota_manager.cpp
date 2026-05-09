@@ -28,6 +28,7 @@ void checkForUpdates() {
             performUpdate(binUrl);
             queueTelegramMessage(" system updated to: " + newVersion );
         } else {
+            queueTelegramMessage(" sysytem is up to date" );
             Serial.println("System is up to date.");
         }
     } else {

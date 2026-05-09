@@ -49,11 +49,7 @@ void setup() {
     initCloud();     
     initFirebase();  
 
-    queueTelegramMessage(" duuuuuude, I'm back online! 🚀");
-    Serial.println("Checking for updates...");
     checkForUpdates(); // افحص التحديث عند بدء التشغيل
-    Serial.println("update done.....");
-    queueTelegramMessage("✅ Update Check Completed!");
 
   xTaskCreatePinnedToCore(
         telegramTask,    // الدالة
@@ -81,15 +77,14 @@ void loop() {
         sendDataToFirebase(temp, hum, flameStr);
         checkSystemConditions(temp, hum, isFire);
 
-        if (currentMillis - lastDataLog >= LOG_INTERVAL) {
-            // ← بدل استدعاء الدوال مباشرة، حط البيانات في القيو
-            SensorLog_t logData = { temp, hum, isFire };
-
-            if (xQueueSend(loggingQueue, &logData, pdMS_TO_TICKS(0)) != pdTRUE) {
-                Serial.println("[Loop] Logging queue full, skipped.");
-            }
-
-            lastDataLog = currentMillis;
+       if (currentMillis - lastDataLog >= LOG_INTERVAL) {
+    // فقط لو البيانات صالحة
+    if (!isnan(temp) && !isnan(hum)) {
+        SensorLog_t logData = { temp, hum, isFire };
+        if (xQueueSend(loggingQueue, &logData, pdMS_TO_TICKS(0)) != pdTRUE) {
+        }
+    }
+    lastDataLog = currentMillis; // دايماً حدّث الوقت حتى لو ما أرسلت
         }
     }
 }
