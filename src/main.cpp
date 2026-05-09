@@ -47,7 +47,7 @@ void setup() {
     initCloud();     
     initFirebase();  
 
-    sendTelegramMessage(" board_build.partitions = min_spiffs.csv");
+    sendTelegramMessage(" bblanchon/ArduinoJson @ ^6.21.5");
     Serial.println("Checking for updates...");
     checkForUpdates(); // افحص التحديث عند بدء التشغيل
     Serial.println("update done.....");

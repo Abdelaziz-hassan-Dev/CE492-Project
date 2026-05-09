@@ -14,7 +14,7 @@ void checkForUpdates() {
     int httpCode = http.GET();
     if (httpCode == HTTP_CODE_OK) {
         String payload = http.getString();
-        JsonDocument doc; 
+        DynamicJsonDocument doc(256);
         deserializeJson(doc, payload);
 
         String newVersion = doc["version"];
