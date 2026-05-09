@@ -7,5 +7,6 @@
 
 void initCloud();
 void logDataToGoogleSheet(float temp, float hum, bool flameStatus);
+void loggingTask(void* parameter);
 
 #endif

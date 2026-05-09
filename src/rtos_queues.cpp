@@ -1,8 +1,9 @@
 #include "rtos_queues.h"
 
 QueueHandle_t telegramQueue = NULL;
+QueueHandle_t loggingQueue  = NULL;  // ← جديد
 
 void initQueues() {
-    // Queue تحمل 10 رسائل كحد أقصى، كل رسالة 150 حرف
     telegramQueue = xQueueCreate(10, 150 * sizeof(char));
+    loggingQueue  = xQueueCreate(5, sizeof(SensorLog_t)); // ← جديد
 }

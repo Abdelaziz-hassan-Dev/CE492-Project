@@ -1,4 +1,6 @@
 #include "cloud_manager.h"
+#include "rtos_queues.h"
+#include "firebase_manager.h" 
 
 WiFiClientSecure secureClient;
 
@@ -37,4 +39,22 @@ void logDataToGoogleSheet(float temp, float hum, bool flameStatus) {
     }
     
     http.end();
+}
+
+void loggingTask(void* parameter) {
+    SensorLog_t data;
+
+    for (;;) {
+        // انتظر حتى تجي بيانات — blocking هنا مقبول لأننا في task منفصل
+        if (xQueueReceive(loggingQueue, &data, portMAX_DELAY) == pdTRUE) {
+            Serial.println("[LogTask] Sending to Google Sheets...");
+            logDataToGoogleSheet(data.temp, data.hum, data.flame);
+
+            Serial.println("[LogTask] Sending to Firebase History...");
+            String flameStr = data.flame ? "DETECTED" : "Safe";
+            logHistoryToFirebase(data.temp, data.hum, flameStr);
+
+            Serial.println("[LogTask] Done.");
+        }
+    }
 }

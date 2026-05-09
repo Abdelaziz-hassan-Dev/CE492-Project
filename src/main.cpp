@@ -49,7 +49,7 @@ void setup() {
     initCloud();     
     initFirebase();  
 
-     queueTelegramMessage(" duuuuuude, I'm back online! 🚀");
+    queueTelegramMessage(" duuuuuude, I'm back online! 🚀");
     Serial.println("Checking for updates...");
     checkForUpdates(); // افحص التحديث عند بدء التشغيل
     Serial.println("update done.....");
@@ -64,35 +64,31 @@ void setup() {
         NULL,            // task handle (مش محتاجينه)
         0                // Core 0
     );
-
+  xTaskCreatePinnedToCore(loggingTask, "LoggingTask", 8192, NULL, 1, NULL, 0); 
 }
 
 void loop() {
     unsigned long currentMillis = millis();
 
-    // Non-blocking delay for system loop
     if (currentMillis - lastSystemTick >= SYSTEM_TICK_INTERVAL) {
         lastSystemTick = currentMillis;
 
-        float temp = getRawTemperature();
-        float hum = getRawHumidity();
-        bool isFire = isFlameDetected();
+        float temp   = getRawTemperature();
+        float hum    = getRawHumidity();
+        bool  isFire = isFlameDetected();
         String flameStr = isFire ? "DETECTED" : "Safe";
 
-        // Real-time updates for the dashboard
         sendDataToFirebase(temp, hum, flameStr);
         checkSystemConditions(temp, hum, isFire);
 
-        // Periodic historical logging (e.g., every 5 minutes)
         if (currentMillis - lastDataLog >= LOG_INTERVAL) {
-            Serial.println("--- Logging Data ---");
-            
-            // 1. Log to Google Sheets (External backup)
-            logDataToGoogleSheet(temp, hum, isFire);
+            // ← بدل استدعاء الدوال مباشرة، حط البيانات في القيو
+            SensorLog_t logData = { temp, hum, isFire };
 
-            // 2. Log to Firebase History (Appends new node with timestamp)
-            logHistoryToFirebase(temp, hum, flameStr);
-            
+            if (xQueueSend(loggingQueue, &logData, pdMS_TO_TICKS(0)) != pdTRUE) {
+                Serial.println("[Loop] Logging queue full, skipped.");
+            }
+
             lastDataLog = currentMillis;
         }
     }

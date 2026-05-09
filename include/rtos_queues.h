@@ -4,8 +4,15 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/queue.h>
 
-// Queue تحمل رسائل التلقرام - الـ loop يكتب فيها، والـ Task يقرأ منها
+// Struct تحمل بيانات الحساسات للـ logging
+typedef struct {
+    float temp;
+    float hum;
+    bool flame;
+} SensorLog_t;
+
 extern QueueHandle_t telegramQueue;
+extern QueueHandle_t loggingQueue;  // ← جديد
 
 void initQueues();
 

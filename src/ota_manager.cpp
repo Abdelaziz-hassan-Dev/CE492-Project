@@ -22,16 +22,17 @@ void checkForUpdates() {
 
         if (newVersion != CURRENT_VERSION) {
             // 1. أرسل الرسالة أولاً لتكون على علم بالبدء
-            sendTelegramMessage("🔄 تحديث جديد متاح: " + newVersion + "\nبدء التحميل الآن...");
+           queueTelegramMessage(" New update available: " + newVersion + "\nStarting download now...");
             
             // 2. ابدأ التحديث
             performUpdate(binUrl);
+            queueTelegramMessage(" system updated to: " + newVersion );
         } else {
             Serial.println("System is up to date.");
         }
     } else {
         // نصيحة: أرسل رسالة في حال فشل الاتصال بالسيرفر لتتمكن من المتابعة بدون سيريال
-        sendTelegramMessage("❌ فشل التحقق من التحديث. كود الخطأ: " + String(httpCode));
+        queueTelegramMessage("❌ Failed to check for updates. Error code: " + String(httpCode));
     }
     http.end();
 }
