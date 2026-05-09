@@ -29,7 +29,6 @@ void checkForUpdates() {
             queueTelegramMessage(" system updated to: " + newVersion );
         } else {
             queueTelegramMessage(" sysytem is up to date" );
-            Serial.println("System is up to date.");
         }
     } else {
         // نصيحة: أرسل رسالة في حال فشل الاتصال بالسيرفر لتتمكن من المتابعة بدون سيريال
