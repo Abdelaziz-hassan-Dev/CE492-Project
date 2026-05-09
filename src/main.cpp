@@ -47,7 +47,7 @@ void setup() {
     initCloud();     
     initFirebase();  
 
-    sendTelegramMessage(" System Started and Connected to WiFi!");
+    sendTelegramMessage(" board_build.partitions = min_spiffs.csv");
     Serial.println("Checking for updates...");
     checkForUpdates(); // افحص التحديث عند بدء التشغيل
     Serial.println("update done.....");
