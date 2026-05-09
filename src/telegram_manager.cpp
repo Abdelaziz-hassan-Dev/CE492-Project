@@ -1,4 +1,5 @@
 #include "telegram_manager.h"
+#include "rtos_queues.h"
 
 WiFiClientSecure client;
 UniversalTelegramBot bot(BOT_TOKEN, client);
@@ -24,7 +25,7 @@ void checkSystemConditions(float temp, float hum, bool flame) {
     if (flame) {
         if (currentMillis - lastFlameAlert > FLAME_COOLDOWN) {
             String msg = "⚠️ Fire Detected! ⚠️\n";
-            sendTelegramMessage(msg);
+            queueTelegramMessage(msg);
             lastFlameAlert = currentMillis;
         }
     }
@@ -35,7 +36,7 @@ void checkSystemConditions(float temp, float hum, bool flame) {
             String msg = "⚠️ High Temperature Alert!⚠️\n";
             msg += "Current Temp: " + String(temp, 1) + "°C\n";
             msg += "Threshold: " + String(TEMP_HIGH_LIMIT, 1) + "°C";
-            sendTelegramMessage(msg);
+            queueTelegramMessage(msg);
             lastTempAlert = currentMillis;
         }
     }
@@ -46,8 +47,38 @@ void checkSystemConditions(float temp, float hum, bool flame) {
             String msg = "⚠️ High Humidity Alert! ⚠️\n";
             msg += "Current Hum: " + String(hum, 1) + "%\n";
             msg += "Threshold: " + String(HUM_HIGH_LIMIT, 1) + "%";
-            sendTelegramMessage(msg);
+            queueTelegramMessage(msg);
             lastHumAlert = currentMillis;
+        }
+    }
+}
+
+
+
+// بديل sendTelegramMessage القديمة - تضع الرسالة في الـ Queue فقط
+// لا تنتظر الإرسال الفعلي
+void queueTelegramMessage(String message) {
+    if (telegramQueue == NULL) return;
+    
+    char buffer[150];
+    message.substring(0, 149).toCharArray(buffer, 150);
+    
+    // xQueueSend لا يوقف الـ loop أبداً
+    // pdMS_TO_TICKS(0) = إذا الـ Queue ممتلئة، تجاهل الرسالة ولا تنتظر
+    if (xQueueSend(telegramQueue, buffer, pdMS_TO_TICKS(0)) != pdTRUE) {
+        Serial.println("[RTOS] Telegram queue full, message dropped.");
+    }
+}
+
+// هذه الـ Task تشتغل على Core 0 بشكل مستقل
+void telegramTask(void* parameter) {
+    char receivedMessage[150];
+    
+    for (;;) { // loop أبدي للـ Task
+        // انتظر حتى تجي رسالة في الـ Queue (blocking هنا مقبول لأننا في task منفصل)
+        if (xQueueReceive(telegramQueue, receivedMessage, portMAX_DELAY) == pdTRUE) {
+            // sendTelegramMessage القديمة لا تزال تشتغل هنا
+            sendTelegramMessage(String(receivedMessage));
         }
     }
 }

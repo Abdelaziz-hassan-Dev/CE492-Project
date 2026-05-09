@@ -7,6 +7,8 @@
 #include "cloud_manager.h"    
 #include "firebase_manager.h" 
 #include "ota_manager.h" 
+#include "rtos_queues.h" 
+
 
 unsigned long lastSystemTick = 0;
 const long SYSTEM_TICK_INTERVAL = 2000;
@@ -42,16 +44,27 @@ void setup() {
     }
     Serial.println("\nTime Synced!");
 
-
+    initQueues();
     initTelegram();
     initCloud();     
     initFirebase();  
 
-    sendTelegramMessage(" bblanchon/ArduinoJson @ ^6.21.5");
+     queueTelegramMessage(" duuuuuude, I'm back online! 🚀");
     Serial.println("Checking for updates...");
     checkForUpdates(); // افحص التحديث عند بدء التشغيل
     Serial.println("update done.....");
-    sendTelegramMessage("✅ Update Check Completed!");
+    queueTelegramMessage("✅ Update Check Completed!");
+
+  xTaskCreatePinnedToCore(
+        telegramTask,    // الدالة
+        "TelegramTask",  // اسم للـ debug
+        8192,            // حجم الـ stack (كافي للـ HTTPS)
+        NULL,            // parameters
+        1,               // priority
+        NULL,            // task handle (مش محتاجينه)
+        0                // Core 0
+    );
+
 }
 
 void loop() {

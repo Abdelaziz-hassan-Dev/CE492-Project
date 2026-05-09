@@ -13,4 +13,8 @@ void checkSystemConditions(float temp, float hum, bool flame);
 
 void sendTelegramMessage(String message);
 
+// أضف هذا السطر فقط للهيدر
+void telegramTask(void* parameter);  // الـ RTOS Task
+void queueTelegramMessage(String message); // بديل sendTelegramMessage
+
 #endif
