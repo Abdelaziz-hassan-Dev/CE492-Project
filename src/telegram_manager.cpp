@@ -191,7 +191,7 @@ void telegramPollingTask(void* parameter) {
     vTaskDelay(pdMS_TO_TICKS(3000));
 
     if (xSemaphoreTake(g_botMutex, pdMS_TO_TICKS(5000)) == pdTRUE) {
-        bot.last_message_received = bot.getUpdates(bot.last_message_received);
+        bot.getUpdates(bot.last_message_received);
         xSemaphoreGive(g_botMutex);
     }
 
