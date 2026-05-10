@@ -1,5 +1,6 @@
 #include "ota_manager.h"
 #include "telegram_manager.h"
+#include "config.h"
 
 
 void checkForUpdates() {
