@@ -66,6 +66,7 @@ void queueTelegramMessage(String message) {
     // xQueueSend لا يوقف الـ loop أبداً
     // pdMS_TO_TICKS(0) = إذا الـ Queue ممتلئة، تجاهل الرسالة ولا تنتظر
     if (xQueueSend(telegramQueue, buffer, pdMS_TO_TICKS(0)) != pdTRUE) {
+        Serial.println("[RTOS] Telegram queue full, message dropped.");
     }
 }
 

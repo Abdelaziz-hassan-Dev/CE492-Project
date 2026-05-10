@@ -25,8 +25,10 @@ void setup() {
     
     // WiFi Connection
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+    Serial.print("Connecting to WiFi");
     while (WiFi.status() != WL_CONNECTED) {
-        delay(400);
+        delay(1000);
+        Serial.print(".");
     }
 
     // Valid system time is critical for historical data logging
@@ -35,7 +37,7 @@ void setup() {
     
     // Blocking wait until time is synced to avoid invalid timestamps in logs
     while(!getLocalTime(&timeinfo)){
-        delay(200);
+        delay(500);
     }
 
     initQueues();
@@ -46,7 +48,7 @@ void setup() {
     xTaskCreatePinnedToCore(telegramTask, "TelegramTask", 8192, NULL, 1, NULL, 0);
     xTaskCreatePinnedToCore(loggingTask,  "LoggingTask",  8192, NULL, 1, NULL, 0);
 
-    delay(200); // تأخير بسيط قبل بدء التحقق من التحديثات للسماح للمهام الأخرى بالبدء بشكل صحيح
+    delay(500); // تأخير بسيط قبل بدء التحقق من التحديثات للسماح للمهام الأخرى بالبدء بشكل صحيح
     checkForUpdates(); 
 
 }
