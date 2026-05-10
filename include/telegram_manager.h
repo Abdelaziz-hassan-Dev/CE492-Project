@@ -6,12 +6,15 @@
 #include <ArduinoJson.h>
 #include "config.h"
 
-extern float g_tempThreshold;
-extern float g_humThreshold;
-
 void initTelegram();
-void queueTelegramMessage(String message);
+
+// Evaluates sensor data against thresholds and triggers alerts if needed
 void checkSystemConditions(float temp, float hum, bool flame);
-void telegramMainTask(void* parameter); // task واحد بس
+
+void sendTelegramMessage(String message);
+
+// أضف هذا السطر فقط للهيدر
+void telegramTask(void* parameter);  // الـ RTOS Task
+void queueTelegramMessage(String message); // بديل sendTelegramMessage
 
 #endif

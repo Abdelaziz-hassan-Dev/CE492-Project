@@ -45,9 +45,10 @@ void setup() {
     initCloud();     
     initFirebase();  
 
-    xTaskCreatePinnedToCore(telegramMainTask, "TelegramMain", 12288, NULL, 1, NULL, 0);
-    xTaskCreatePinnedToCore(loggingTask,      "LoggingTask",  8192,  NULL, 1, NULL, 0);
+    xTaskCreatePinnedToCore(telegramTask, "TelegramTask", 8192, NULL, 1, NULL, 0);
+    xTaskCreatePinnedToCore(loggingTask,  "LoggingTask",  8192, NULL, 1, NULL, 0);
 
+    delay(500); // تأخير بسيط قبل بدء التحقق من التحديثات للسماح للمهام الأخرى بالبدء بشكل صحيح
     checkForUpdates(); 
 
 }
