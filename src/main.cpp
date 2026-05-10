@@ -20,15 +20,12 @@ const long  gmtOffset_sec = 3 * 3600;
 const int   daylightOffset_sec = 0;
 
 void setup() {
-    Serial.begin(115200);
     initSensors();
     
     // WiFi Connection
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-    Serial.print("Connecting to WiFi");
     while (WiFi.status() != WL_CONNECTED) {
-        delay(1000);
-        Serial.print(".");
+        delay(400);
     }
 
     // Valid system time is critical for historical data logging
@@ -37,7 +34,7 @@ void setup() {
     
     // Blocking wait until time is synced to avoid invalid timestamps in logs
     while(!getLocalTime(&timeinfo)){
-        delay(500);
+        delay(200);
     }
 
     initQueues();
@@ -48,7 +45,7 @@ void setup() {
     xTaskCreatePinnedToCore(telegramTask, "TelegramTask", 8192, NULL, 1, NULL, 0);
     xTaskCreatePinnedToCore(loggingTask,  "LoggingTask",  8192, NULL, 1, NULL, 0);
 
-    delay(500); // تأخير بسيط قبل بدء التحقق من التحديثات للسماح للمهام الأخرى بالبدء بشكل صحيح
+    delay(200); // تأخير بسيط قبل بدء التحقق من التحديثات للسماح للمهام الأخرى بالبدء بشكل صحيح
     checkForUpdates(); 
 
 }

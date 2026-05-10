@@ -11,7 +11,6 @@ void initCloud() {
 
 void logDataToGoogleSheet(float temp, float hum, bool flameStatus) {
     if (WiFi.status() != WL_CONNECTED) {
-        Serial.println("WiFi Disconnected! Cannot send to Google Sheets.");
         return;
     }
 
@@ -21,8 +20,6 @@ void logDataToGoogleSheet(float temp, float hum, bool flameStatus) {
     String url = String(G_SCRIPT_URL) + "?temp=" + String(temp, 1) + 
                  "&hum=" + String(hum, 1) + 
                  "&fire=" + (flameStatus ? "FIRE!" : "Safe");
-
-    Serial.print("Sending data to Google Sheets...");
     
     http.begin(secureClient, url); 
     
@@ -33,9 +30,6 @@ void logDataToGoogleSheet(float temp, float hum, bool flameStatus) {
     
     if (httpCode > 0) {
         String payload = http.getString();
-        Serial.println("Done. Response: " + payload);
-    } else {
-        Serial.println("Failed. Error: " + http.errorToString(httpCode));
     }
     
     http.end();
@@ -47,14 +41,11 @@ void loggingTask(void* parameter) {
     for (;;) {
         // انتظر حتى تجي بيانات — blocking هنا مقبول لأننا في task منفصل
         if (xQueueReceive(loggingQueue, &data, portMAX_DELAY) == pdTRUE) {
-            Serial.println("[LogTask] Sending to Google Sheets...");
             logDataToGoogleSheet(data.temp, data.hum, data.flame);
 
-            Serial.println("[LogTask] Sending to Firebase History...");
             String flameStr = data.flame ? "DETECTED" : "Safe";
             logHistoryToFirebase(data.temp, data.hum, flameStr);
 
-            Serial.println("[LogTask] Done.");
         }
     }
 }
