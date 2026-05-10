@@ -75,10 +75,29 @@ void telegramTask(void* parameter) {
     char receivedMessage[150];
     
     for (;;) { // loop أبدي للـ Task
-        // انتظر حتى تجي رسالة في الـ Queue (blocking هنا مقبول لأننا في task منفصل)
-        if (xQueueReceive(telegramQueue, receivedMessage, portMAX_DELAY) == pdTRUE) {
-            // sendTelegramMessage القديمة لا تزال تشتغل هنا
+        
+        // 1. ننتظر ثانية واحدة فقط (1000 ملي ثانية) لرسائل الكيوز بدلاً من portMAX_DELAY
+        if (xQueueReceive(telegramQueue, receivedMessage, pdMS_TO_TICKS(1000)) == pdTRUE) {
+            // إذا كانت هناك رسالة تحذيرية من الحساسات، نرسلها
             sendTelegramMessage(String(receivedMessage));
+        }
+
+        // 2. فحص الرسائل الواردة من البوت
+        // الدالة getUpdates تجلب الرسائل الجديدة فقط بناءً على آخر رسالة تمت قراءتها
+        int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
+
+        for (int i = 0; i < numNewMessages; i++) {
+            String text = bot.messages[i].text;
+            
+            // التحقق من محتوى الرسالة
+            if (text == "reboot") {
+                // إرسال تأكيد للمستخدم قبل إعادة التشغيل
+                bot.sendMessage(bot.messages[i].chat_id, "System is rebooting now...", "");
+                delay(500); // تأخير بسيط لضمان وصول رسالة التأكيد
+                
+                // أمر إعادة تشغيل شريحة ESP32
+                ESP.restart(); 
+            }
         }
     }
 }
