@@ -4,18 +4,17 @@
 #include <WiFiClientSecure.h>
 #include <UniversalTelegramBot.h>
 #include <ArduinoJson.h>
-#include "config.h" // ملف config.h يحتوي بالفعل على CURRENT_VERSION
-
-// متغيرات الـ Thresholds قابلة للتعديل
-extern float currentTempThreshold;
-extern float currentHumThreshold;
+#include "config.h"
 
 void initTelegram();
-void checkSystemConditions(float temp, float hum, bool flame);
-void sendTelegramMessage(String message);
-void queueTelegramMessage(String message);
-void telegramTask(void* parameter); 
 
-void handleNewMessages(int numNewMessages);
+// Evaluates sensor data against thresholds and triggers alerts if needed
+void checkSystemConditions(float temp, float hum, bool flame);
+
+void sendTelegramMessage(String message);
+
+// أضف هذا السطر فقط للهيدر
+void telegramTask(void* parameter);  // الـ RTOS Task
+void queueTelegramMessage(String message); // بديل sendTelegramMessage
 
 #endif
