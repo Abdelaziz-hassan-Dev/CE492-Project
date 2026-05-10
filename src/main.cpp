@@ -20,6 +20,7 @@ const long  gmtOffset_sec = 3 * 3600;
 const int   daylightOffset_sec = 0;
 
 void setup() {
+    Serial.begin(115200);
     initSensors();
     
     // WiFi Connection

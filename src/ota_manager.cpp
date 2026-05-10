@@ -26,9 +26,8 @@ void checkForUpdates() {
             
             // 2. ابدأ التحديث
             performUpdate(binUrl);
-     //       queueTelegramMessage(" system updated to: " + newVersion );
         } else {
-            queueTelegramMessage(" system is up to data" );
+            queueTelegramMessage(" system is up to date: "  );
         }
     } else {
         // نصيحة: أرسل رسالة في حال فشل الاتصال بالسيرفر لتتمكن من المتابعة بدون سيريال
