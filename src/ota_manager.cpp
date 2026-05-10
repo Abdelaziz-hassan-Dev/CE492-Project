@@ -37,41 +37,6 @@ void checkForUpdates() {
     http.end();
 }
 
-
-// void checkForUpdates() {
-//     if (WiFi.status() != WL_CONNECTED) return;
-
-//     WiFiClientSecure client;
-//     client.setInsecure(); // لتجاوز فحص شهادة SSL من GitHub للتبسيط
-
-//     HTTPClient http;
-//     http.begin(client, VERSION_JSON_URL);
-    
-//     int httpCode = http.GET();
-//     if (httpCode == HTTP_CODE_OK) {
-//         String payload = http.getString();
-//         //StaticJsonDocument<256> doc;
-//         JsonDocument doc; // 
-//         deserializeJson(doc, payload);
-
-//         String newVersion = doc["version"];
-//         String binUrl = doc["url"];
-
-//         Serial.print("Current Version: "); Serial.println(CURRENT_VERSION);
-//         Serial.print("New Version available: "); Serial.println(newVersion);
-
-//         if (newVersion != CURRENT_VERSION) {
-//             Serial.println("Update found! Starting OTA...");
-//             performUpdate(binUrl);
-//         } else {
-//             Serial.println("System is up to date.");
-//         }
-//     } else {
-//         Serial.printf("Failed to check version, error: %s\n", http.errorToString(httpCode).c_str());
-//     }
-//     http.end();
-// }
-
 void performUpdate(String binUrl) {
     WiFiClientSecure client;
     client.setInsecure();
