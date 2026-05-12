@@ -8,6 +8,7 @@ UniversalTelegramBot bot(BOT_TOKEN, client);
 unsigned long lastTempAlert = 0;
 unsigned long lastHumAlert = 0;
 unsigned long lastFlameAlert = 0;
+unsigned long lastGasAlert   = 0; 
 
 void initTelegram() {
     // Bypass SSL certificate validation for simplicity in this prototype
@@ -18,7 +19,7 @@ void sendTelegramMessage(String message) {
     bot.sendMessage(CHAT_ID, message, "");
 }
 
-void checkSystemConditions(float temp, float hum, bool flame) {
+void checkSystemConditions(float temp, float hum, bool flame, bool gas) {
     unsigned long currentMillis = millis();
 
     // 1. Fire Logic (High Priority)
@@ -49,6 +50,13 @@ void checkSystemConditions(float temp, float hum, bool flame) {
             msg += "Threshold: " + String(HUM_HIGH_LIMIT, 1) + "%";
             queueTelegramMessage(msg);
             lastHumAlert = currentMillis;
+        }
+    }
+
+    if (gas) {
+        if (currentMillis - lastGasAlert > GAS_COOLDOWN) {
+            queueTelegramMessage("💨 Gas Leak Detected! ⚠️\n");
+            lastGasAlert = currentMillis;
         }
     }
 }

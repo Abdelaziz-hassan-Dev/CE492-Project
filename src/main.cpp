@@ -62,14 +62,16 @@ void loop() {
         float temp   = getRawTemperature();
         float hum    = getRawHumidity();
         bool  isFire = isFlameDetected();
+         bool   isGas   = isGasDetected();
         String flameStr = isFire ? "DETECTED" : "Safe";
 
-        sendDataToFirebase(temp, hum, flameStr);
-        checkSystemConditions(temp, hum, isFire);
-
+        
+        sendDataToFirebase(temp, hum, flameStr, isGas);      // ← أضف isGas
+        checkSystemConditions(temp, hum, isFire, isGas);     // ← أضف isGas
+        
        if (currentMillis - lastDataLog >= LOG_INTERVAL) {
        if (!isnan(temp) && !isnan(hum)) {
-        SensorLog_t logData = { temp, hum, isFire };
+          SensorLog_t logData = { temp, hum, isFire, isGas };
         if (xQueueSend(loggingQueue, &logData, pdMS_TO_TICKS(0)) != pdTRUE) {
         }
     }

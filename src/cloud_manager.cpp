@@ -9,7 +9,7 @@ void initCloud() {
     secureClient.setInsecure(); 
 }
 
-void logDataToGoogleSheet(float temp, float hum, bool flameStatus) {
+void logDataToGoogleSheet(float temp, float hum, bool flameStatus, bool gas) {
     if (WiFi.status() != WL_CONNECTED) {
         Serial.println("WiFi Disconnected! Cannot send to Google Sheets.");
         return;
@@ -18,9 +18,11 @@ void logDataToGoogleSheet(float temp, float hum, bool flameStatus) {
     HTTPClient http;
     
     // Construct GET request URL with query parameters
-    String url = String(G_SCRIPT_URL) + "?temp=" + String(temp, 1) + 
-                 "&hum=" + String(hum, 1) + 
-                 "&fire=" + (flameStatus ? "FIRE!" : "Safe");
+String url = String(G_SCRIPT_URL) +
+             "?temp=" + String(temp, 1) +
+             "&hum="  + String(hum, 1) +
+             "&fire=" + String(flameStatus ? "FIRE!" : "Safe") +
+             "&gas="  + String(gas ? "DETECTED" : "Safe");
 
     Serial.print("Sending data to Google Sheets...");
     
@@ -48,11 +50,11 @@ void loggingTask(void* parameter) {
         // انتظر حتى تجي بيانات — blocking هنا مقبول لأننا في task منفصل
         if (xQueueReceive(loggingQueue, &data, portMAX_DELAY) == pdTRUE) {
             Serial.println("[LogTask] Sending to Google Sheets...");
-            logDataToGoogleSheet(data.temp, data.hum, data.flame);
+            logDataToGoogleSheet(data.temp, data.hum, data.flame, data.gas);
 
             Serial.println("[LogTask] Sending to Firebase History...");
             String flameStr = data.flame ? "DETECTED" : "Safe";
-            logHistoryToFirebase(data.temp, data.hum, flameStr);
+            logHistoryToFirebase(data.temp, data.hum, flameStr, data.gas);
 
             Serial.println("[LogTask] Done.");
         }

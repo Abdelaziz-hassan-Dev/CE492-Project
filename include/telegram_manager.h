@@ -9,7 +9,7 @@
 void initTelegram();
 
 // Evaluates sensor data against thresholds and triggers alerts if needed
-void checkSystemConditions(float temp, float hum, bool flame);
+void checkSystemConditions(float temp, float hum, bool flame, bool gas);
 
 void sendTelegramMessage(String message);
 

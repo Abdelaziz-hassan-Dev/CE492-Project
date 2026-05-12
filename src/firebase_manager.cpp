@@ -1,4 +1,5 @@
 #include "firebase_manager.h"
+#include "rtos_queues.h" 
 #include <addons/TokenHelper.h>
 #include <addons/RTDBHelper.h>
 #include <time.h> 
@@ -26,7 +27,7 @@ void initFirebase() {
 }
 
 // Updates the Dashboard UI (Throttled to prevent flooding)
-void sendDataToFirebase(float t, float h, String flameStatus) {
+void sendDataToFirebase(float t, float h, String flameStatus, bool gas) {
     if (Firebase.ready() && signupOK && (millis() - sendDataPrevMillis > 2000 || sendDataPrevMillis == 0)) {
         sendDataPrevMillis = millis();
 
@@ -35,6 +36,7 @@ void sendDataToFirebase(float t, float h, String flameStatus) {
         if (!isnan(t)) json.set("temperature", t);
         if (!isnan(h)) json.set("humidity", h);
         json.set("flame", flameStatus);
+        json.set("gas", gas ? "DETECTED" : "Safe");  // ← جديد
 
         // Use updateNode to overwrite the current state at "/sensor"
         Firebase.RTDB.updateNode(&fbdo, "/sensor", &json);
@@ -54,13 +56,14 @@ String getFormattedTime() {
 }
 
 // Appends data to historical logs
-void logHistoryToFirebase(float t, float h, String flameStatus) {
+void logHistoryToFirebase(float t, float h, String flameStatus, bool gas) {  
     if (Firebase.ready() && signupOK) {
         FirebaseJson json;
         
         if (!isnan(t)) json.set("temperature", t);
         if (!isnan(h)) json.set("humidity", h);
         json.set("flame", flameStatus);
+        json.set("gas", gas ? "DETECTED" : "Safe"); 
         
         // Add server-side readable timestamp
         String timestamp = getFormattedTime();

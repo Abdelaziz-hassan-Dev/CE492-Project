@@ -8,9 +8,8 @@
 void initFirebase();
 
 // Updates the real-time node for the dashboard (Overwrites previous value)
-void sendDataToFirebase(float temp, float hum, String flameStatus);
+void sendDataToFirebase(float temp, float hum, String flameStatus, bool gas);   // ← أضف bool gas
+void logHistoryToFirebase(float temp, float hum, String flameStatus, bool gas); // ← أضف bool gas
 
-// Appends a new entry to the historical log (Push operation)
-void logHistoryToFirebase(float temp, float hum, String flameStatus);
 
 #endif

@@ -7,6 +7,7 @@ static bool sensorsInitialized = false;
 void initSensors() {
     if (!sensorsInitialized) {
         pinMode(FLAME_PIN, INPUT);
+       pinMode(GAS_PIN, INPUT);
         dhtSensor.begin();
         sensorsInitialized = true;
     }
@@ -23,4 +24,8 @@ float getRawHumidity() {
 bool isFlameDetected() {
     // Sensor output is Active LOW (LOW means fire detected)
     return (digitalRead(FLAME_PIN) == LOW); 
+}
+
+bool isGasDetected() {
+    return (digitalRead(GAS_PIN) == LOW);  // Active LOW مثل الشعلة
 }

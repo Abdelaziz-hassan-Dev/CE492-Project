@@ -11,4 +11,7 @@ float getRawTemperature();
 float getRawHumidity();
 bool isFlameDetected();
 
+bool isGasDetected();   
+
+
 #endif

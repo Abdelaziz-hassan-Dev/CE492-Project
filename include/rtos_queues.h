@@ -9,6 +9,7 @@ typedef struct {
     float temp;
     float hum;
     bool flame;
+    bool  gas;    
 } SensorLog_t;
 
 extern QueueHandle_t telegramQueue;
