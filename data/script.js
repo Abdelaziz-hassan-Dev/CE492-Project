@@ -86,6 +86,7 @@ database.ref('/sensor').on('value', (snapshot) => {
         document.getElementById("humidity").innerText = data.humidity.toFixed(1);
         
         updateFlameStatus(data.flame);
+        updateGasStatus(data.gas);
         updateChart(tempChart, data.temperature);
         updateChart(humChart, data.humidity);
         
@@ -130,6 +131,9 @@ function showOfflineStatus() {
     flameText.innerText = "No Signal";
     flameText.style.color = "gray";
     document.getElementById("flameCard").className = "card flame-card"; 
+    document.getElementById("gas").innerText = "No Signal";
+    document.getElementById("gas").style.color = "gray";
+    document.getElementById("gasCard").className = "card gas-card";
 }
 
 // ================= Helper Functions =================
@@ -173,6 +177,23 @@ function updateFlameStatus(status) {
     }
 }
 
+function updateGasStatus(status) {
+    const el   = document.getElementById("gas");
+    const card = document.getElementById("gasCard");
+    
+    if (status === "DETECTED") {
+        card.classList.remove("gas-safe");
+        card.classList.add("gas-danger");
+        el.innerText = "DANGER! ⚠️";
+        el.style.color = "#a29bfe";
+    } else {
+        card.classList.remove("gas-danger");
+        card.classList.add("gas-safe");
+        el.innerText = "Safe ✅";
+        el.style.color = "#00c851";
+    }
+}
+
 // Browser connection status (Debug only)
 const connectedRef = firebase.database().ref(".info/connected");
 connectedRef.on("value", (snap) => {
@@ -182,3 +203,4 @@ connectedRef.on("value", (snap) => {
     console.log("Browser disconnected from Firebase");
   }
 });
+

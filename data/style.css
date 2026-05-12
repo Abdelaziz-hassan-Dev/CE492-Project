@@ -174,3 +174,18 @@ h2 {
 canvas {
     max-width: 100%;
 }
+
+/* Gas Card */
+.gas-card .icon { color: #a29bfe; }
+.gas-safe  { border-bottom: 4px solid #00c851; }
+.gas-danger { 
+    border-bottom: 4px solid #a29bfe;
+    background: rgba(162, 155, 254, 0.15);
+    animation: pulse-gas 1s infinite;
+}
+
+@keyframes pulse-gas {
+    0%   { box-shadow: 0 0 0 0   rgba(162, 155, 254, 0.4); }
+    70%  { box-shadow: 0 0 0 10px rgba(162, 155, 254, 0); }
+    100% { box-shadow: 0 0 0 0   rgba(162, 155, 254, 0); }
+}
