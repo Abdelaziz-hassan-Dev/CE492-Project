@@ -1,180 +1,319 @@
-/* Global Reset & Fonts */
+/* ========== VARIABLES ========== */
+:root {
+    --bg-deep:    #0d0f1a;
+    --bg-card:    rgba(255,255,255,0.05);
+    --border:     rgba(255,255,255,0.08);
+    --border-lit: rgba(255,255,255,0.16);
+    --text-pri:   #f0f2ff;
+    --text-sec:   #7a7f9a;
+    --accent-temp:  #ff8c00;
+    --accent-hum:   #00d2ff;
+    --accent-fire:  #ff4455;
+    --accent-gas:   #a29bfe;
+    --safe:   #00e676;
+    --danger: #ff4455;
+    --font-mono: 'Space Mono', monospace;
+    --font-body: 'DM Sans', sans-serif;
+    --radius-card: 16px;
+    --radius-sm:    8px;
+}
+
+/* ========== RESET ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #1a1a2e;
-    color: #ffffff;
-    margin: 0;
-    padding: 0;
+    font-family: var(--font-body);
+    background-color: var(--bg-deep);
+    color: var(--text-pri);
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 24px 16px;
     overflow-x: hidden;
 }
 
-/* Background Aesthetics (Ambient Shapes) */
+/* ========== BACKGROUND ========== */
 .background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    overflow: hidden;
+    position: fixed; inset: 0;
+    z-index: -1; overflow: hidden;
+    pointer-events: none;
 }
 .shape {
     position: absolute;
     border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.6;
+    filter: blur(100px);
+    opacity: 0.35;
 }
 .shape-1 {
-    top: -10%;
-    left: -10%;
-    width: 400px;
-    height: 400px;
-    background: #ff8c00;
+    top: -15%; left: -10%;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, #ff6b00, #ff4455);
 }
 .shape-2 {
-    bottom: -10%;
-    right: -10%;
-    width: 500px;
-    height: 500px;
-    background: #00d2ff;
+    bottom: -15%; right: -10%;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, #00d2ff, #6c63ff);
+}
+.grid-overlay {
+    position: absolute; inset: 0;
+    background-image:
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 48px 48px;
 }
 
-/* Main Container (Glassmorphism Effect) */
+/* ========== CONTAINER ========== */
 .container {
-    width: 90%;
-    max-width: 800px;
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(20px); 
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    margin: 20px 0;
+    width: 100%;
+    max-width: 900px;
+    background: rgba(14, 16, 28, 0.7);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--border-lit);
+    border-radius: 24px;
+    padding: 32px 28px;
+    box-shadow:
+        0 0 0 1px rgba(255,255,255,0.04),
+        0 20px 60px rgba(0,0,0,0.6),
+        0 0 80px rgba(0,180,255,0.04);
 }
 
-/* Header Section */
+/* ========== HEADER ========== */
 header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
     flex-wrap: wrap;
-}
-h2 {
-    margin: 0;
-    font-weight: 600;
-    letter-spacing: 1px;
-}
-.header-content {
-    display: flex;
-    align-items: center;
-    gap: 15px;
+    gap: 16px;
+    margin-bottom: 20px;
 }
 
-/* Connection Status Indicator */
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.logo-mark {
+    font-size: 2rem;
+    line-height: 1;
+    filter: drop-shadow(0 0 12px rgba(255,140,0,0.5));
+}
+.header-titles h2 {
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--text-pri);
+}
+.subtitle {
+    font-size: 0.75rem;
+    color: var(--text-sec);
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+    display: block;
+}
+
+.header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+}
+
 .status-indicator {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 0.9rem;
-    background: rgba(0,0,0,0.2);
+    gap: 7px;
+    font-size: 0.82rem;
+    font-family: var(--font-mono);
+    background: rgba(0,0,0,0.3);
     padding: 5px 12px;
     border-radius: 20px;
+    border: 1px solid var(--border);
 }
 .dot {
-    width: 10px;
-    height: 10px;
+    width: 8px; height: 8px;
     border-radius: 50%;
-    display: inline-block;
+    flex-shrink: 0;
 }
-.online { background-color: #00c851; box-shadow: 0 0 10px #00c851; }
-.offline { background-color: #ff4444; }
+.online  { background: var(--safe);   box-shadow: 0 0 8px var(--safe); }
+.offline { background: var(--danger); }
 
 .timestamp {
-    width: 100%;
-    text-align: right;
+    font-size: 0.78rem;
+    color: var(--text-sec);
+    font-family: var(--font-mono);
+}
+
+/* ========== DIVIDER ========== */
+.divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-lit), transparent);
+    margin-bottom: 24px;
+}
+
+/* ========== CARDS GRID — 4 in a row ========== */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+/* ========== BASE CARD ========== */
+.card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 20px 18px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
+}
+.card:hover {
+    transform: translateY(-3px);
+    border-color: var(--border-lit);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+}
+
+/* ========== CARD HEADER ========== */
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.icon {
+    font-size: 1rem;
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+}
+.card-label {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text-sec);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+/* ========== CARD VALUE ========== */
+.card-value {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    margin-top: 2px;
+}
+.value-num {
+    font-family: var(--font-mono);
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--text-pri);
+    transition: opacity 0.3s;
+}
+.unit {
+    font-family: var(--font-mono);
     font-size: 0.85rem;
-    color: #a0a0a0;
-    margin-top: 5px;
+    color: var(--text-sec);
+}
+.status-value {
+    align-items: center;
+}
+.status-value span {
+    font-size: 0.95rem;
+    font-weight: 600;
 }
 
-/* ابحث عن الكلاس الجامع للكروت وخلي التنسيق بتاعه كدا عشان يشيل 4 أعمدة متساوية */
-.cards-grid { 
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* دي اللي حتخليهم 4 في مستوى واحد */
-    gap: 20px;
-    width: 100%;
+/* ========== PROGRESS BAR ========== */
+.card-bar {
+    height: 3px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: auto;
+}
+.bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.6s ease;
 }
 
-/* عشان يظبط في التلفونات والشاشات الصغيرة */
-@media (max-width: 1024px) {
-    .cards-grid {
-        grid-template-columns: repeat(2, 1fr); /* كرتين في الشاشات المتوسطة */
-    }
-}
-@media (max-width: 480px) {
-    .cards-grid {
-        grid-template-columns: 1fr; /* كرت واحد في الموبايل */
-    }
-}
+/* ========== CARD-SPECIFIC ACCENT COLORS ========== */
 
-/* تعديل لون إنذار الغاز ليكون أحمر زي الحريق بالضبط (بدل البنفسجي) */
+/* Temperature */
+.temp-card .icon { color: var(--accent-temp); background: rgba(255,140,0,0.12); }
+.temp-card::before { background: var(--accent-temp); }
+.temp-card:hover::before { opacity: 1; }
+.bar-fill.temp-fill { background: linear-gradient(90deg, #ff8c00, #ffb347); }
+
+/* Humidity */
+.hum-card .icon { color: var(--accent-hum); background: rgba(0,210,255,0.12); }
+.hum-card::before { background: var(--accent-hum); }
+.hum-card:hover::before { opacity: 1; }
+.bar-fill.hum-fill { background: linear-gradient(90deg, #00d2ff, #7dd8ff); }
+
+/* Flame */
+.flame-card .icon { color: var(--accent-fire); background: rgba(255,68,85,0.12); }
+.flame-card::before { background: var(--accent-fire); }
+.flame-card:hover::before { opacity: 1; }
+
+/* Gas */
+.gas-card .icon { color: var(--accent-gas); background: rgba(162,155,254,0.12); }
+.gas-card::before { background: var(--accent-gas); }
+.gas-card:hover::before { opacity: 1; }
+
+/* ========== STATUS STATES ========== */
+
+/* Safe */
+.flame-safe #flame, .gas-safe #gas { color: var(--safe) !important; }
+
+/* Danger — fire */
+.flame-danger {
+    border-color: rgba(255,68,85,0.4) !important;
+    background: rgba(255,68,85,0.08) !important;
+    animation: pulse-fire 1.2s ease-in-out infinite;
+}
+.flame-danger::before { opacity: 1 !important; background: var(--danger) !important; }
+
+/* Danger — gas */
 .gas-danger {
-    border-bottom: 4px solid #ff4444;
-    background: rgba(255, 68, 68, 0.15);
-    animation: pulse 1s infinite;
+    border-color: rgba(162,155,254,0.4) !important;
+    background: rgba(162,155,254,0.08) !important;
+    animation: pulse-gas 1.2s ease-in-out infinite;
 }
+.gas-danger::before { opacity: 1 !important; background: var(--accent-gas) !important; }
 
-/* Icon Colors */
-.temp-card .icon { color: #ff8c00; }
-.hum-card .icon { color: #00d2ff; }
-.flame-card .icon { color: #ff4444; }
-
-/* Fire Status Styles & Animation */
-.flame-safe { border-bottom: 4px solid #00c851; }
-.flame-danger { 
-    border-bottom: 4px solid #ff4444;
-    background: rgba(255, 68, 68, 0.15);
-    animation: pulse 1s infinite;
+@keyframes pulse-fire {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,68,85,0.3); }
+    50%       { box-shadow: 0 0 20px 4px rgba(255,68,85,0.15); }
 }
-
-@keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.4); }
-    70% { box-shadow: 0 0 0 10px rgba(255, 68, 68, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(255, 68, 68, 0); }
-}
-
-/* Charts Container */
-.charts-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-}
-.chart-box {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 15px;
-    padding: 15px;
-}
-canvas {
-    max-width: 100%;
-}
-
-/* Gas Card */
-.gas-card .icon { color: #a29bfe; }
-.gas-safe  { border-bottom: 4px solid #00c851; }
-.gas-danger { 
-    border-bottom: 4px solid #a29bfe;
-    background: rgba(162, 155, 254, 0.15);
-    animation: pulse-gas 1s infinite;
-}
-
 @keyframes pulse-gas {
-    0%   { box-shadow: 0 0 0 0   rgba(162, 155, 254, 0.4); }
-    70%  { box-shadow: 0 0 0 10px rgba(162, 155, 254, 0); }
-    100% { box-shadow: 0 0 0 0   rgba(162, 155, 254, 0); }
+    0%, 100% { box-shadow: 0 0 0 0 rgba(162,155,254,0.3); }
+    50%       { box-shadow: 0 0 20px 4px rgba(162,155,254,0.15); }
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 780px) {
+    .cards-grid { grid-template-columns: repeat(2, 1fr); }
+    .container  { padding: 24px 20px; }
+    .value-num  { font-size: 1.7rem; }
+}
+@media (max-width: 440px) {
+    .cards-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .value-num  { font-size: 1.5rem; }
+    .header-titles h2 { font-size: 1rem; }
 }

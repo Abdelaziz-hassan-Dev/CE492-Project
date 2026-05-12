@@ -9,102 +9,81 @@ const firebaseConfig = {
     appId: "1:1012960274280:web:84a6c1800fb722cb6d58dd"
 };
   
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
-
-
-// ================= Data Listener & Watchdog Logic =================
-
+// ================= Watchdog =================
 let watchdogTimer;
 
-// Main Firebase Listener (Real-time updates)
+// ================= Main Listener =================
 database.ref('/sensor').on('value', (snapshot) => {
     const data = snapshot.val();
-    
-    if (data) {
-        // 1. Data received indicates system is Online
-        showOnlineStatus();
+    if (!data) return;
 
-        // 2. Update UI elements
-        document.getElementById("temperature").innerText = data.temperature.toFixed(1);
-        document.getElementById("humidity").innerText = data.humidity.toFixed(1);
-        
-        updateFlameStatus(data.flame);
-        updateGasStatus(data.gas);
+    showOnlineStatus();
 
-        
-        // 3. Watchdog Reset
-        // Clear previous timer as we just received a heartbeat
-        clearTimeout(watchdogTimer);
+    // Update numeric values
+    const temp = parseFloat(data.temperature);
+    const hum  = parseFloat(data.humidity);
 
-        // Set new timeout: if no data for 15s, mark system as Offline
-        watchdogTimer = setTimeout(showOfflineStatus, 15000); 
-    }
+    document.getElementById("temperature").innerText = isNaN(temp) ? "--" : temp.toFixed(1);
+    document.getElementById("humidity").innerText    = isNaN(hum)  ? "--" : hum.toFixed(1);
+
+    // Update progress bars (temp 0–60°C range, hum 0–100%)
+    const tempBar = document.getElementById("tempBar");
+    const humBar  = document.getElementById("humBar");
+    if (tempBar) tempBar.style.width = Math.min(Math.max((temp / 60) * 100, 0), 100) + "%";
+    if (humBar)  humBar.style.width  = Math.min(Math.max(hum, 0), 100) + "%";
+
+    updateFlameStatus(data.flame);
+    updateGasStatus(data.gas);
+
+    // Watchdog reset
+    clearTimeout(watchdogTimer);
+    watchdogTimer = setTimeout(showOfflineStatus, 15000);
 });
 
-// UI State: Online
+// ================= UI States =================
+
 function showOnlineStatus() {
-    const dot = document.getElementById("connectionDot");
-    const text = document.getElementById("connectionText");
-    
-    dot.className = "dot online";
-    text.innerText = "Live";
-    
-    // Restore opacity
+    document.getElementById("connectionDot").className  = "dot online";
+    document.getElementById("connectionText").innerText = "Live";
     document.getElementById("temperature").style.opacity = "1";
-    document.getElementById("humidity").style.opacity = "1";
-    
+    document.getElementById("humidity").style.opacity    = "1";
     document.getElementById("lastUpdate").innerText = getCurrentTimeShort();
 }
 
-// UI State: Offline
 function showOfflineStatus() {
-    const dot = document.getElementById("connectionDot");
-    const text = document.getElementById("connectionText");
-    const flameText = document.getElementById("flame");
+    document.getElementById("connectionDot").className  = "dot offline";
+    document.getElementById("connectionText").innerText = "Offline";
+    document.getElementById("temperature").style.opacity = "0.35";
+    document.getElementById("humidity").style.opacity    = "0.35";
 
-    dot.className = "dot offline";
-    text.innerText = "Offline";
-    
-    // Dim values to indicate stale data
-    document.getElementById("temperature").style.opacity = "0.4";
-    document.getElementById("humidity").style.opacity = "0.4";
-    
-    // Update status indicators
-    flameText.innerText = "No Signal";
-    flameText.style.color = "gray";
-    document.getElementById("flameCard").className = "card flame-card"; 
-    document.getElementById("gas").innerText = "No Signal";
-    document.getElementById("gas").style.color = "gray";
+    const flame = document.getElementById("flame");
+    flame.innerText    = "No Signal";
+    flame.style.color  = "var(--text-sec)";
+    document.getElementById("flameCard").className = "card flame-card";
+
+    const gas = document.getElementById("gas");
+    gas.innerText    = "No Signal";
+    gas.style.color  = "var(--text-sec)";
     document.getElementById("gasCard").className = "card gas-card";
 }
 
-// ================= Helper Functions =================
-
-// Returns time in HH:MM format
-function getCurrentTimeShort() {
-    const now = new Date();
-    return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-}
+// ================= Status Helpers =================
 
 function updateFlameStatus(status) {
-    const el = document.getElementById("flame");
+    const el   = document.getElementById("flame");
     const card = document.getElementById("flameCard");
-    
-    el.innerText = status;
-    
-    if(status === "Fire Detected") {
-        card.classList.remove("flame-safe");
-        card.classList.add("flame-danger");
-        el.innerText = "Fire Detected! ⚠️";
-        el.style.color = "#ff4444";
+
+    if (status === "Fire Detected") {
+        card.className  = "card flame-card flame-danger";
+        el.innerText    = "🔥 Fire Detected!";
+        el.style.color  = "var(--danger)";
     } else {
-        card.classList.remove("flame-danger");
-        card.classList.add("flame-safe");
-        el.innerText = "Safe ✅";
-        el.style.color = "#00c851";
+        card.className  = "card flame-card flame-safe";
+        el.innerText    = "✅ Safe";
+        el.style.color  = "var(--safe)";
     }
 }
 
@@ -113,25 +92,23 @@ function updateGasStatus(status) {
     const card = document.getElementById("gasCard");
 
     if (status === "Gas Leak Detected") {
-        card.classList.remove("gas-safe");
-        card.classList.add("gas-danger");
-        el.innerText = "Gas Leak Detected! ⚠️";
-        el.style.color = "#ff4444"; // غيّرنا اللون هنا للأحمر
+        card.className  = "card gas-card gas-danger";
+        el.innerText    = "⚠️ Gas Leak!";
+        el.style.color  = "#a29bfe";
     } else {
-        card.classList.remove("gas-danger");
-        card.classList.add("gas-safe");
-        el.innerText = "Safe ✅";
-        el.style.color = "#00c851";
+        card.className  = "card gas-card gas-safe";
+        el.innerText    = "✅ Safe";
+        el.style.color  = "var(--safe)";
     }
 }
 
-// Browser connection status (Debug only)
-const connectedRef = firebase.database().ref(".info/connected");
-connectedRef.on("value", (snap) => {
-  if (snap.val() === true) {
-    console.log("Browser connected to Firebase");
-  } else {
-    console.log("Browser disconnected from Firebase");
-  }
-});
+// ================= Utilities =================
 
+function getCurrentTimeShort() {
+    return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+// Debug: Firebase connection
+firebase.database().ref(".info/connected").on("value", (snap) => {
+    console.log(snap.val() ? "Connected to Firebase" : "Disconnected from Firebase");
+});

@@ -55,7 +55,7 @@ void checkSystemConditions(float temp, float hum, bool flame, bool gas) {
 
     if (gas) {
         if (currentMillis - lastGasAlert > GAS_COOLDOWN) {
-            queueTelegramMessage("💨 Gas Leak Detected! ⚠️\n");
+            queueTelegramMessage("⚠️ Gas Leak Detected! ⚠️\n");
             lastGasAlert = currentMillis;
         }
     }

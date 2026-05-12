@@ -49,10 +49,10 @@ void loggingTask(void* parameter) {
     for (;;) {
         // انتظر حتى تجي بيانات — blocking هنا مقبول لأننا في task منفصل
         if (xQueueReceive(loggingQueue, &data, portMAX_DELAY) == pdTRUE) {
-            Serial.println("[LogTask] Sending to Google Sheets...");
             logDataToGoogleSheet(data.temp, data.hum, data.flame, data.gas);
 
-            Serial.println("[LogTask] Sending to Firebase History...");
+//vTaskDelay(pdMS_TO_TICKS(1000)); // تأخير بسيط بين الطلبات لتجنب أي مشاكل في Google Scripts 
+            
             String flameStr = data.flame ? "Fire Detected" : "Safe";
             logHistoryToFirebase(data.temp, data.hum, flameStr, data.gas);
 

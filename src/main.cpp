@@ -78,4 +78,5 @@ void loop() {
     lastDataLog = currentMillis;
         }
     }
+    vTaskDelay(pdMS_TO_TICKS(10));
 }
