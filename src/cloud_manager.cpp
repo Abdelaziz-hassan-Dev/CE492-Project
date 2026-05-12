@@ -21,8 +21,8 @@ void logDataToGoogleSheet(float temp, float hum, bool flameStatus, bool gas) {
 String url = String(G_SCRIPT_URL) +
              "?temp=" + String(temp, 1) +
              "&hum="  + String(hum, 1) +
-             "&fire=" + String(flameStatus ? "FIRE!" : "Safe") +
-             "&gas="  + String(gas ? "DETECTED" : "Safe");
+             "&fire=" + String(flameStatus ? "Fire Detected" : "Safe") +
+             "&gas="  + String(gas ? "Gas Leak Detected" : "Safe");
 
     Serial.print("Sending data to Google Sheets...");
     
@@ -53,7 +53,7 @@ void loggingTask(void* parameter) {
             logDataToGoogleSheet(data.temp, data.hum, data.flame, data.gas);
 
             Serial.println("[LogTask] Sending to Firebase History...");
-            String flameStr = data.flame ? "DETECTED" : "Safe";
+            String flameStr = data.flame ? "Fire Detected" : "Safe";
             logHistoryToFirebase(data.temp, data.hum, flameStr, data.gas);
 
             Serial.println("[LogTask] Done.");

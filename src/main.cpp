@@ -63,7 +63,7 @@ void loop() {
         float hum    = getRawHumidity();
         bool  isFire = isFlameDetected();
          bool   isGas   = isGasDetected();
-        String flameStr = isFire ? "DETECTED" : "Safe";
+        String flameStr = isFire ? "Fire Detected" : "Safe";
 
         
         sendDataToFirebase(temp, hum, flameStr, isGas);      // ← أضف isGas

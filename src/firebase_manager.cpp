@@ -36,7 +36,7 @@ void sendDataToFirebase(float t, float h, String flameStatus, bool gas) {
         if (!isnan(t)) json.set("temperature", t);
         if (!isnan(h)) json.set("humidity", h);
         json.set("flame", flameStatus);
-        json.set("gas", gas ? "DETECTED" : "Safe");  // ← جديد
+        json.set("gas", gas ? "Gas Leak Detected" : "Safe");  // ← جديد
 
         // Use updateNode to overwrite the current state at "/sensor"
         Firebase.RTDB.updateNode(&fbdo, "/sensor", &json);
@@ -63,7 +63,7 @@ void logHistoryToFirebase(float t, float h, String flameStatus, bool gas) {
         if (!isnan(t)) json.set("temperature", t);
         if (!isnan(h)) json.set("humidity", h);
         json.set("flame", flameStatus);
-        json.set("gas", gas ? "DETECTED" : "Safe"); 
+        json.set("gas", gas ? "Gas Leak Detected" : "Safe"); 
         
         // Add server-side readable timestamp
         String timestamp = getFormattedTime();

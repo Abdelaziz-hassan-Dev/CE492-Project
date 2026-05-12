@@ -13,61 +13,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
-// ================= Chart Configuration =================
 
-function createChartConfig(label, color, minVal, maxVal) {
-    return {
-        type: 'line',
-        data: {
-            labels: [], 
-            datasets: [{
-                label: label,
-                data: [],
-                borderColor: color,
-                backgroundColor: color + '33',
-                borderWidth: 2,
-                tension: 0.4,
-                fill: true,
-                pointRadius: 3
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false, 
-            scales: {
-                x: { 
-                    display: true,
-                    grid: { color: 'rgba(255,255,255,0.05)' },
-                    ticks: { 
-                        color: '#aaa',
-                        maxTicksLimit: 6,
-                        maxRotation: 0 
-                    }
-                },
-                y: {
-                    suggestedMin: minVal, 
-                    suggestedMax: maxVal,
-                    grid: { color: 'rgba(255,255,255,0.1)' },
-                    ticks: { color: '#ccc' }
-                }
-            },
-            plugins: {
-                legend: { labels: { color: '#fff' } },
-                tooltip: {
-                    mode: 'index',
-                    intersect: false,
-                }
-            }
-        }
-    };
-}
-
-// Chart Initialization
-const tempCtx = document.getElementById('tempChart').getContext('2d');
-const humCtx = document.getElementById('humChart').getContext('2d');
-
-const tempChart = new Chart(tempCtx, createChartConfig('Temperature History', '#ff8c00', 10, 30));
-const humChart = new Chart(humCtx, createChartConfig('Humidity History', '#00d2ff', 30, 80));
 
 // ================= Data Listener & Watchdog Logic =================
 
@@ -87,8 +33,7 @@ database.ref('/sensor').on('value', (snapshot) => {
         
         updateFlameStatus(data.flame);
         updateGasStatus(data.gas);
-        updateChart(tempChart, data.temperature);
-        updateChart(humChart, data.humidity);
+
         
         // 3. Watchdog Reset
         // Clear previous timer as we just received a heartbeat
@@ -144,30 +89,16 @@ function getCurrentTimeShort() {
     return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
-function updateChart(chart, value) {
-    const timeString = getCurrentTimeShort();
-    
-    chart.data.labels.push(timeString);
-    chart.data.datasets[0].data.push(value);
-
-    // Keep last 20 data points (Rolling window)
-    if(chart.data.labels.length > 20) {
-        chart.data.labels.shift();
-        chart.data.datasets[0].data.shift();
-    }
-    chart.update();
-}
-
 function updateFlameStatus(status) {
     const el = document.getElementById("flame");
     const card = document.getElementById("flameCard");
     
     el.innerText = status;
     
-    if(status === "DETECTED") {
+    if(status === "Fire Detected") {
         card.classList.remove("flame-safe");
         card.classList.add("flame-danger");
-        el.innerText = "DANGER! ⚠️";
+        el.innerText = "Fire Detected! ⚠️";
         el.style.color = "#ff4444";
     } else {
         card.classList.remove("flame-danger");
@@ -180,12 +111,12 @@ function updateFlameStatus(status) {
 function updateGasStatus(status) {
     const el   = document.getElementById("gas");
     const card = document.getElementById("gasCard");
-    
-    if (status === "DETECTED") {
+
+    if (status === "Gas Leak Detected") {
         card.classList.remove("gas-safe");
         card.classList.add("gas-danger");
-        el.innerText = "DANGER! ⚠️";
-        el.style.color = "#a29bfe";
+        el.innerText = "Gas Leak Detected! ⚠️";
+        el.style.color = "#ff4444"; // غيّرنا اللون هنا للأحمر
     } else {
         card.classList.remove("gas-danger");
         card.classList.add("gas-safe");

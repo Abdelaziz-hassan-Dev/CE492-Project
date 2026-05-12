@@ -103,42 +103,31 @@ h2 {
     margin-top: 5px;
 }
 
-/* Cards Grid Layout */
-.cards-grid {
+/* ابحث عن الكلاس الجامع للكروت وخلي التنسيق بتاعه كدا عشان يشيل 4 أعمدة متساوية */
+.cards-grid { 
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(4, 1fr); /* دي اللي حتخليهم 4 في مستوى واحد */
     gap: 20px;
-    margin-bottom: 30px;
+    width: 100%;
 }
 
-.card {
-    background: rgba(255, 255, 255, 0.07);
-    border-radius: 15px;
-    padding: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    transition: transform 0.3s ease;
+/* عشان يظبط في التلفونات والشاشات الصغيرة */
+@media (max-width: 1024px) {
+    .cards-grid {
+        grid-template-columns: repeat(2, 1fr); /* كرتين في الشاشات المتوسطة */
+    }
 }
-.card:hover {
-    transform: translateY(-5px);
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.card-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 15px;
-    color: #ccc;
-    font-size: 1.1rem;
+@media (max-width: 480px) {
+    .cards-grid {
+        grid-template-columns: 1fr; /* كرت واحد في الموبايل */
+    }
 }
 
-.card-value {
-    font-size: 2.2rem;
-    font-weight: 600;
-}
-.unit {
-    font-size: 1.2rem;
-    color: #ccc;
+/* تعديل لون إنذار الغاز ليكون أحمر زي الحريق بالضبط (بدل البنفسجي) */
+.gas-danger {
+    border-bottom: 4px solid #ff4444;
+    background: rgba(255, 68, 68, 0.15);
+    animation: pulse 1s infinite;
 }
 
 /* Icon Colors */
