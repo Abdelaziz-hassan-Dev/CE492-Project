@@ -65,25 +65,31 @@ This flowchart illustrates how the system manages sensors, connectivity, and dec
 ## 📂 Project Structure
 
 ```text
-ESP32_Project/
-├── data/                              # Web Dashboard Files
-│ ├── index.html
-│ ├── style.css
-│ └── script.js
-├── google_script/                     # Google Apps Script for logging to Sheets
-│ └── code.gs
-├── include/ # Header Files
-│ ├── cloud_manager.h
-│ ├── config.h                         #configuration file for API & HW
-│ ├── firebase_manager.h
-│ ├── sensor_manager.h
-│ └── telegram_manager.h
-├── src/                               # Source Code
-│ ├── main.cpp
-│ ├── cloud_manager.cpp
-│ ├── firebase_manager.cpp
-│ ├── sensor_manager.cpp
-│ └── telegram_manager.cpp
+CE492-Project/
+├── data/                              # Web Dashboard files (HTML/CSS/JS)
+│   ├── index.html
+│   ├── script.js
+│   └── style.css
+├── google_script/                     # Google Apps Script for logging data to Google Sheets
+│   └── code.gs
+├── include/                           # Header files (*.h)
+│   ├── cloud_manager.h                # General cloud communication logic
+│   ├── firebase_manager.h             # Firebase Realtime Database integration
+│   ├── ota_manager.h                  # Over-the-Air update management
+│   ├── rtos_queues.h                  # FreeRTOS queue definitions for task communication
+│   ├── sensor_manager.h               # DHT22 and Flame sensor handling
+│   └── telegram_manager.h             # Telegram Bot API integration
+├── src/                               # Source files (*.cpp)
+│   ├── main.cpp                       # Entry point and FreeRTOS task initialization
+│   ├── cloud_manager.cpp
+│   ├── firebase_manager.cpp
+│   ├── ota_manager.cpp
+│   ├── rtos_queues.cpp
+│   ├── sensor_manager.cpp
+│   └── telegram_manager.cpp
+├── firmware.bin                       # Compiled firmware binary for deployment
+├── platformio.ini                     # Project configuration and library dependencies
+├── version.json                       # Version control file for OTA updates
 ```
 
 ## 🎥 Live Demo
