@@ -26,23 +26,6 @@ void initFirebase() {
     Firebase.reconnectWiFi(true);
 }
 
-// Updates the Dashboard UI (Throttled to prevent flooding)
-void sendDataToFirebase(float t, float h, String flameStatus, bool gas) {
-    if (Firebase.ready() && signupOK && (millis() - sendDataPrevMillis > 2000 || sendDataPrevMillis == 0)) {
-        sendDataPrevMillis = millis();
-
-        FirebaseJson json;
-        
-        if (!isnan(t)) json.set("temperature", t);
-        if (!isnan(h)) json.set("humidity", h);
-        json.set("flame", flameStatus);
-        json.set("gas", gas ? "Gas Leak Detected" : "Safe");  // ← جديد
-
-        // Use updateNode to overwrite the current state at "/sensor"
-        Firebase.RTDB.updateNode(&fbdo, "/sensor", &json);
-    }
-}
-
 // Helper to format timestamp for logs
 String getFormattedTime() {
     struct tm timeinfo;
@@ -55,6 +38,26 @@ String getFormattedTime() {
     return String(timeStringBuff);
 }
 
+// Updates the Dashboard UI (Throttled to prevent flooding)
+void sendDataToFirebase(float t, float h, String flameStatus, bool gas) {
+    if (Firebase.ready() && signupOK && (millis() - sendDataPrevMillis > 2000 || sendDataPrevMillis == 0)) {
+        sendDataPrevMillis = millis();
+
+        FirebaseJson json;
+        
+        if (!isnan(t)) json.set("temperature", t);
+        if (!isnan(h)) json.set("humidity", h);
+        json.set("flame", flameStatus);
+        json.set("gas", gas ? "Gas Leak Detected" : "Safe");  // ← جديد
+
+        json.set("last_update", getFormattedTime());
+
+        // Use updateNode to overwrite the current state at "/sensor"
+        Firebase.RTDB.updateNode(&fbdo, "/sensor", &json);
+    }
+}
+
+
 // Appends data to historical logs
 void logHistoryToFirebase(float t, float h, String flameStatus, bool gas) {  
     if (Firebase.ready() && signupOK) {
@@ -64,6 +67,7 @@ void logHistoryToFirebase(float t, float h, String flameStatus, bool gas) {
         if (!isnan(h)) json.set("humidity", h);
         json.set("flame", flameStatus);
         json.set("gas", gas ? "Gas Leak Detected" : "Safe"); 
+        
         
         // Add server-side readable timestamp
         String timestamp = getFormattedTime();
